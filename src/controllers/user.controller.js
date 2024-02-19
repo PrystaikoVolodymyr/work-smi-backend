@@ -4,6 +4,7 @@ const {
   getUsersList,
   createUser,
   deleteUserByUid,
+  getCustomToken,
   signInWithCustomToken,
   setClaims,
   deleteUserByEmail,
@@ -78,9 +79,9 @@ module.exports = {
         userClaims = await setClaims(firebaseUser.uid, { role });
       }
 
-      const user = await signInWithCustomToken(firebaseUser.uid);
+      const token = await getCustomToken(firebaseUser.uid);
 
-      res.status(201).json({ user, userClaims });
+      res.status(201).json({ token });
     } catch (e) {
       console.log(e);
       res.status(400).json(e.message);

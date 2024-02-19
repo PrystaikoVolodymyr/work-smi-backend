@@ -30,6 +30,10 @@ module.exports = {
     return await firebase.auth().signInWithCustomToken(token);
   },
 
+  async getCustomToken(uid) {
+    return  await App.auth().createCustomToken(uid);
+  },
+
   async getUserByUid(uid) {
     return await App.auth().getUser(uid);
   },
