@@ -31,7 +31,7 @@ module.exports = {
   },
 
   async getCustomToken(uid) {
-    return  await App.auth().createCustomToken(uid);
+    return await App.auth().createCustomToken(uid);
   },
 
   async getUserByUid(uid) {
