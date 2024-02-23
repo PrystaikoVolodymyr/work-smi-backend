@@ -23,10 +23,11 @@ const options = {
     apis: ['./routes/*.js'],
 };
 
-app.use("/", require("./routes/index"));
-
 const swaggerSpec = swaggerJSDoc(options);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
+// app.use("/", require("./routes/index"));
+app.use("/users", require("./routes/user"));
 
 app.listen(PORT, () => {
     console.log(`Running on port ${PORT}`);
