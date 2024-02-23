@@ -8,26 +8,24 @@ const swaggerJSDoc = require('swagger-jsdoc');
 
 const app = express();
 
+app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cors());
+app.use("/", require("./routes/index"));
 
 const options = {
-    swaggerDefinition: {
+    definition: {
         openapi: '3.0.3',
         info: {
             title: 'work-smi',
             version: '1.0.0',
         }
     },
-    apis: ['./routes/*.js'],
+    apis: [`${__dirname}/routes/*.routes.js`],
 };
 
 const swaggerSpec = swaggerJSDoc(options);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
-
-// app.use("/", require("./routes/index"));
-app.use("/users", require("./routes/user"));
 
 app.listen(PORT, () => {
     console.log(`Running on port ${PORT}`);
