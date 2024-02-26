@@ -1,10 +1,11 @@
 require("dotenv").config();
 
-const { PORT } = require('./config/config')
+const { PORT, MONGO_URL } = require('./config/config')
 const express = require("express");
 const cors = require('cors');
 const swaggerUi = require('swagger-ui-express');
 const swaggerJSDoc = require('swagger-jsdoc');
+const mongoose = require('mongoose');
 
 const app = express();
 
@@ -27,8 +28,22 @@ const options = {
 const swaggerSpec = swaggerJSDoc(options);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
-app.listen(PORT, () => {
-    console.log(`Running on port ${PORT}`);
-});
+async function start () {
+    try {
+        await mongoose.connect(MONGO_URL, {
+            useNewUrlParser: true,
+            useUnifiedTopology: true,
+        })
+
+        await app.listen(PORT, () => {
+            console.log(`App has been started at port ${PORT}...`)
+        })
+    } catch (e) {
+        console.log("Server Error mongoDB", e.message())
+        process.exit(1)
+    }
+}
+
+start().then(()=>console.log("..."))
 
 module.exports = app;

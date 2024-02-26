@@ -3,12 +3,11 @@ const axios = require("axios");
 const {
   getUsersList,
   createUser,
-  deleteUserByUid,
   getCustomToken,
-  signInWithCustomToken,
   setClaims,
   deleteUserByEmail,
-    getUserByEmail
+  getUserByEmail,
+  getUserByUid,
 } = require("../service/firebase.service");
 const {
   LINKEDIN_CLIENT_SECRET,
@@ -16,12 +15,33 @@ const {
   LINKEDIN_CLIENT_ID,
 } = require("../config/config");
 
+const User = require("../models/User");
 module.exports = {
   async signUpUser(req, res) {
     try {
-      const {} = req.body;
+      const { userId, role } = req.body;
 
-      res.status(201).json();
+      const user = await getUserByUid(userId);
+
+      console.log(user)
+      let claims = user.customClaims?.role
+        ? user.customClaims
+        : await setClaims(userId, { role });
+
+      const isUserExist = await User.findOne({ uid: userId });
+
+      if (!isUserExist) {
+        await User.create({
+          email: user.email || '',
+          displayName: user.displayName || '',
+          uid: userId || '',
+          photo: user.photoURL || '',
+          claims: claims,
+          name: user.name || '',
+          surname: user.surname || '',
+        });
+      }
+      res.status(201).json({ status: "success", data: {claims}});
     } catch (e) {
       res.status(400).json(e.message);
     }
@@ -54,8 +74,8 @@ module.exports = {
 
       const linkedinUserData = userProfile.data;
 
-      let firebaseUser = await getUserByEmail(linkedinUserData.email)
-      let userClaims = firebaseUser?.customClaims
+      let firebaseUser = await getUserByEmail(linkedinUserData.email);
+      let userClaims = firebaseUser?.customClaims;
 
       if (!firebaseUser) {
         firebaseUser = await createUser({
