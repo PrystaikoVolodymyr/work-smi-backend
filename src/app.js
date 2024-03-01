@@ -20,7 +20,20 @@ const options = {
         info: {
             title: 'work-smi',
             version: '1.0.0',
-        }
+        },
+        components: {
+            securitySchemes: {
+                bearer: {
+                    type: 'http',
+                    scheme: 'bearer',
+                    bearerFormat: 'JWT',
+                    in: 'header'
+                }
+            }
+        },
+        security: [
+            { bearer: [] }
+        ]
     },
     apis: [`${__dirname}/routes/*.routes.js`],
 };

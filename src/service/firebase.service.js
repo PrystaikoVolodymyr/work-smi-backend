@@ -99,4 +99,8 @@ module.exports = {
     const user = await App.auth().getUserByEmail(email);
     return await App.auth().deleteUser(user.uid);
   },
+
+  async decodeIdToken(token) {
+    return await App.auth().verifyIdToken(token);
+  },
 };
