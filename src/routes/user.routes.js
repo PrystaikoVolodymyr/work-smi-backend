@@ -1,6 +1,6 @@
 const router = require("express").Router();
 const userController = require("../controllers/user.controller");
-const { auth, ROLE_RECRUITER, ROLE_CANDIDATE, ROLE_ADMIN} = require('../middleware/auth.middleware');
+const { auth, ROLE_RECRUITER, ROLE_CANDIDATE, ROLE_ADMIN, ROLE_EMPLOYEE} = require('../middleware/auth.middleware');
 
 
 /**
@@ -102,7 +102,7 @@ router.post("/sign-up-linkedin", userController.singUpLinkedin);
  *                 status:
  *                   type: string
  */
-router.get("/", auth([ROLE_ADMIN, ROLE_CANDIDATE, ROLE_RECRUITER]), userController.getUserInfo);
+router.get("/", auth([ROLE_ADMIN, ROLE_CANDIDATE, ROLE_RECRUITER, ROLE_EMPLOYEE]), userController.getUserInfo);
 
 /**
  * @swagger
@@ -150,7 +150,7 @@ router.get("/", auth([ROLE_ADMIN, ROLE_CANDIDATE, ROLE_RECRUITER]), userControll
  *                 status:
  *                   type: string
  */
-router.patch("/", auth([ROLE_ADMIN, ROLE_CANDIDATE, ROLE_RECRUITER]), userController.updateUserProfile);
+router.patch("/", auth([ROLE_ADMIN, ROLE_CANDIDATE, ROLE_RECRUITER, ROLE_EMPLOYEE]), userController.updateUserProfile);
 
 /**
  * @swagger
@@ -177,7 +177,7 @@ router.patch("/", auth([ROLE_ADMIN, ROLE_CANDIDATE, ROLE_RECRUITER]), userContro
  *                 status:
  *                   type: string
  */
-router.get("/filters", auth([ROLE_ADMIN, ROLE_CANDIDATE, ROLE_RECRUITER]), userController.getUserFilters);
+router.get("/filters", auth([ROLE_ADMIN, ROLE_CANDIDATE, ROLE_RECRUITER, ROLE_EMPLOYEE]), userController.getUserFilters);
 
 /**
  * @swagger
@@ -250,7 +250,7 @@ router.get("/filters", auth([ROLE_ADMIN, ROLE_CANDIDATE, ROLE_RECRUITER]), userC
  *                 status:
  *                   type: string
  */
-router.patch("/filters", auth([ROLE_ADMIN, ROLE_CANDIDATE, ROLE_RECRUITER]), userController.updateUsersFilters);
+router.patch("/filters", auth([ROLE_ADMIN, ROLE_CANDIDATE, ROLE_RECRUITER, ROLE_EMPLOYEE]), userController.updateUsersFilters);
 
 /**
  * @swagger
@@ -277,7 +277,7 @@ router.patch("/filters", auth([ROLE_ADMIN, ROLE_CANDIDATE, ROLE_RECRUITER]), use
  *                 status:
  *                   type: string
  */
-router.get("/response", auth([ROLE_ADMIN, ROLE_CANDIDATE, ROLE_RECRUITER]), userController.getUserResponses);
+router.get("/response", auth([ROLE_ADMIN, ROLE_CANDIDATE, ROLE_RECRUITER, ROLE_EMPLOYEE]), userController.getUserResponses);
 
 /**
  * @swagger
@@ -326,7 +326,7 @@ router.get("/response", auth([ROLE_ADMIN, ROLE_CANDIDATE, ROLE_RECRUITER]), user
  *                 status:
  *                   type: string
  */
-router.patch("/response", auth([ROLE_ADMIN, ROLE_CANDIDATE, ROLE_RECRUITER]), userController.updateUsersResponse);
+router.patch("/response", auth([ROLE_ADMIN, ROLE_CANDIDATE, ROLE_RECRUITER,  ROLE_EMPLOYEE]), userController.updateUsersResponse);
 
 router.post("/sign-in", userController.getUserToken);
 router.get("/all", userController.getAllUsers);
