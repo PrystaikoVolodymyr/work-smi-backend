@@ -244,9 +244,9 @@ router.get("/filters", auth([ROLE_ADMIN, ROLE_CANDIDATE, ROLE_RECRUITER]), userC
  *                 data:
  *                   type: object
  *                   properties:
- *                       user:
- *                         type: string
- *                         description: User info.
+ *                       filters:
+ *                         type: object
+ *                         description: Users filters.
  *                 status:
  *                   type: string
  */
@@ -279,7 +279,53 @@ router.patch("/filters", auth([ROLE_ADMIN, ROLE_CANDIDATE, ROLE_RECRUITER]), use
  */
 router.get("/response", auth([ROLE_ADMIN, ROLE_CANDIDATE, ROLE_RECRUITER]), userController.getUserResponses);
 
-
+/**
+ * @swagger
+ * /users/response:
+ *  patch:
+ *    tags:
+ *      - users
+ *    summary: Update user response
+ *    requestBody:
+ *      content:
+ *          application/json:
+ *              schema:
+ *                  type: object
+ *                  properties:
+ *                      resume:
+ *                          type: string
+ *                      coverLetter:
+ *                          type: string
+ *                      templates:
+ *                          type: array
+ *                          items:
+ *                             type: object
+ *                             properties:
+ *                               name:
+ *                                 type: string
+ *                               messages:
+ *                                 type: array
+ *                                 items:
+ *                                   type: string
+ *
+ *    produces:
+ *      - application/json
+ *    responses:
+ *       200:
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                       response:
+ *                         type: object
+ *                         description: User response.
+ *                 status:
+ *                   type: string
+ */
 router.patch("/response", auth([ROLE_ADMIN, ROLE_CANDIDATE, ROLE_RECRUITER]), userController.updateUsersResponse);
 
 router.post("/sign-in", userController.getUserToken);
