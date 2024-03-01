@@ -12,6 +12,7 @@ module.exports = {
                 decodeIdToken(token.slice(7))
                     .then(async userData => {
                             req.user = userData;
+                            console.log(userData)
                             if (userData.role === 'admin' || roles.includes(userData.role)) {
                                 return next();
                             }

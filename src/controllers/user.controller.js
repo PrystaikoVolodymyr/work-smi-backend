@@ -1,5 +1,7 @@
 const axios = require("axios");
-
+const User = require("../models/User");
+const UserFilters = require("../models/UserFilters");
+const Response = require("../models/Response");
 const {
   getUsersList,
   createUser,
@@ -8,6 +10,7 @@ const {
   deleteUserByEmail,
   getUserByEmail,
   getUserByUid,
+  signInWithCustomToken,
 } = require("../service/firebase.service");
 const {
   LINKEDIN_CLIENT_SECRET,
@@ -15,7 +18,6 @@ const {
   LINKEDIN_CLIENT_ID,
 } = require("../config/config");
 
-const User = require("../models/User");
 module.exports = {
   async signUpUser(req, res) {
     try {
@@ -23,25 +25,28 @@ module.exports = {
 
       const user = await getUserByUid(userId);
 
-      console.log(user)
-      let claims = user.customClaims?.role
-        ? user.customClaims
-        : await setClaims(userId, { role });
+      let claims = user.customClaims?.role ? user.customClaims : { role };
 
       const isUserExist = await User.findOne({ uid: userId });
 
+      const name = user?.displayName ? user.displayName.split(" ")[0] : "";
+
+      const surname = user?.displayName ? user.displayName.split(" ")[1] : "";
+
       if (!isUserExist) {
-        await User.create({
-          email: user.email || '',
-          displayName: user.displayName || '',
-          uid: userId || '',
-          photo: user.photoURL || '',
-          claims: claims,
-          name: user.name || '',
-          surname: user.surname || '',
+        const { _id } = await User.create({
+          email: user.email || "",
+          displayName: user.displayName || "",
+          uid: userId,
+          photo: user.photoURL || "",
+          role: role,
+          name,
+          surname,
         });
+
+        claims = await setClaims(userId, { _id, role });
       }
-      res.status(201).json({ status: "success", data: {claims}});
+      res.status(201).json({ status: "success", data: { claims } });
     } catch (e) {
       res.status(400).json(e.message);
     }
@@ -101,7 +106,8 @@ module.exports = {
 
       const token = await getCustomToken(firebaseUser.uid);
 
-      res.status(201).json({ token });
+      res.status(201).json({ status: "success", data: { token } });
+
     } catch (e) {
       console.log(e);
       res.status(400).json(e.message);
@@ -133,6 +139,150 @@ module.exports = {
       const users = await setClaims(userId, { role: "admin" });
       console.log(users);
       res.status(201).json(users);
+    } catch (e) {
+      res.status(400).json(e.message);
+    }
+  },
+
+  async getUserToken(req, res) {
+    try {
+      const { uid } = req.body;
+      const users = await signInWithCustomToken(uid);
+      res.status(201).json(users);
+    } catch (e) {
+      res.status(400).json(e.message);
+    }
+  },
+
+  async getUserInfo(req, res) {
+    try {
+      const { _id } = req.user;
+      const user = await User.findById(_id);
+
+      res.status(201).json({ status: "success", data: { user } });
+    } catch (e) {
+      res.status(400).json(e.message);
+    }
+  },
+
+  async getUserFilters(req, res) {
+    try {
+      const { _id } = req.user;
+      const filters = await UserFilters.g({ userId: _id });
+
+      res.status(201).json({ status: "success", data: { filters } });
+    } catch (e) {
+      res.status(400).json(e.message);
+    }
+  },
+
+  async updateUsersFilters(req, res) {
+    try {
+      const { _id } = req.user;
+      const {
+        activity,
+        position,
+        experience,
+        workFormat,
+        employmentType,
+        businessTrip,
+        relocate,
+        location,
+        skils,
+        keyWords,
+        languages,
+      } = req.body;
+
+      const filters = await UserFilters.findOneAndUpdate(
+        { userId: _id },
+        {
+          activity,
+          position,
+          experience,
+          workFormat,
+          employmentType,
+          businessTrip,
+          relocate,
+          location,
+          skils,
+          keyWords,
+          languages,
+        },
+        { new: true },
+      );
+
+      res.status(201).json({ status: "success", data: { filters } });
+    } catch (e) {
+      res.status(400).json(e.message);
+    }
+  },
+
+  async getUserResponses(req, res) {
+    try {
+      const { _id } = req.user.customClaims;
+      const response = await Response.findOne({ userId: _id });
+
+      res.status(201).json({ status: "success", data: { response } });
+    } catch (e) {
+      res.status(400).json(e.message);
+    }
+  },
+
+  async updateUsersResponse(req, res) {
+    try {
+      const { _id } = req.user;
+      const { resume, coverLetter, templates } = req.body;
+
+     const response = await Response.findOneAndUpdate(
+        { userId: _id },
+        {
+          resume,
+          coverLetter,
+          templates,
+        },
+        { new: true },
+      );
+
+      res.status(201).json({ status: "success", data: { response } });
+    } catch (e) {
+      res.status(400).json(e.message);
+    }
+  },
+
+  async updateUserProfile(req, res) {
+    try {
+      const {
+        firstName,
+        lastName,
+        middleName,
+        phone,
+        achievements,
+        jobData,
+        educationData,
+      } = req.body;
+
+      const { _id } = req.user;
+
+      const user = await User.findOneAndUpdate(
+          { _id: _id },
+          {
+            firstName,
+            lastName,
+            middleName,
+            phone,
+            achievements,
+            jobData,
+            educationData,
+          },
+           {new: true}
+        );
+
+        if (!user) {
+          throw Error("No user in DB");
+
+        }
+
+      res.status(201).json({ status: "success", data: { user } });
     } catch (e) {
       res.status(400).json(e.message);
     }
