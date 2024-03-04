@@ -214,6 +214,8 @@ router.get("/filters", auth([ROLE_ADMIN, ROLE_CANDIDATE, ROLE_RECRUITER, ROLE_EM
  *                             type: string
  *                      location:
  *                          type: array
+ *                          items:
+ *                             type: string
  *                      skills:
  *                          type: array
  *                          items:
@@ -272,13 +274,17 @@ router.patch("/filters", auth([ROLE_ADMIN, ROLE_CANDIDATE, ROLE_RECRUITER, ROLE_
  *              schema:
  *                  type: object
  *                  properties:
- *                      activity:
- *                          type: string
- *                      position:
- *                          type: string
+ *                      workFormat:
+ *                          type: array
+ *                          items:
+ *                             type: string
  *                      experience:
  *                          type: string
- *                      workFormat:
+ *                      categories:
+ *                          type: array
+ *                          items:
+ *                             type: string
+ *                      skills:
  *                          type: array
  *                          items:
  *                             type: string
@@ -286,39 +292,14 @@ router.patch("/filters", auth([ROLE_ADMIN, ROLE_CANDIDATE, ROLE_RECRUITER, ROLE_
  *                          type: array
  *                          items:
  *                             type: string
- *                      businessTrip:
- *                          type: boolean
- *                      relocate:
- *                          type: array
- *                          items:
- *                             type: string
  *                      location:
  *                          type: array
- *                      skills:
+ *                          items:
+ *                             type: string
+ *                      benefits:
  *                          type: array
  *                          items:
  *                             type: string
- *                      keyWords:
- *                          type: array
- *                          items:
- *                             type: string
- *                      languages:
- *                          type: array
- *                          items:
- *                             type: object
- *                             properties:
- *                               name:
- *                                 type: string
- *                               level:
- *                                 type: string
- *                      salary:
- *                          type: object
- *                          properties:
- *                               amount:
- *                                 type: number
- *                               currency:
- *                                 type: string
- *
  *    produces:
  *      - application/json
  *    responses:
@@ -328,16 +309,10 @@ router.patch("/filters", auth([ROLE_ADMIN, ROLE_CANDIDATE, ROLE_RECRUITER, ROLE_
  *             schema:
  *               type: object
  *               properties:
- *                 data:
- *                   type: object
- *                   properties:
- *                       filters:
- *                         type: object
- *                         description: Users filters.
  *                 status:
  *                   type: string
  */
-router.post("/onboarding", auth([ROLE_ADMIN, ROLE_CANDIDATE, ROLE_RECRUITER, ROLE_EMPLOYEE]), userController.updateUsersFilters);
+router.post("/onboarding", auth([ROLE_ADMIN, ROLE_CANDIDATE, ROLE_RECRUITER, ROLE_EMPLOYEE]), userController.setUserOnboarding);
 
 /**
  * @swagger

@@ -11,7 +11,7 @@ const {
   getUserByEmail,
   getUserByUid,
   signInWithCustomToken,
-  deleteUsersInBatches
+  deleteUsersInBatches,
 } = require("../service/firebase.service");
 const {
   LINKEDIN_CLIENT_SECRET,
@@ -131,12 +131,12 @@ module.exports = {
           });
 
           await UserFilters.create({
-            userId: _id
-          })
+            userId: _id,
+          });
 
           await Response.create({
-            userId: _id
-          })
+            userId: _id,
+          });
 
           await setClaims(firebaseUser.uid, { _id, role });
         }
@@ -228,7 +228,7 @@ module.exports = {
         skills,
         keyWords,
         languages,
-        salary
+        salary,
       } = req.body;
 
       const filters = await UserFilters.findOneAndUpdate(
@@ -245,7 +245,7 @@ module.exports = {
           skills,
           keyWords,
           languages,
-          salary
+          salary,
         },
         { new: true },
       );
@@ -319,6 +319,42 @@ module.exports = {
       if (!user) {
         throw Error("No user in DB");
       }
+
+      res.status(201).json({ status: "success", data: { user } });
+    } catch (e) {
+      res.status(400).json(e.message);
+    }
+  },
+
+  async setUserOnboarding(req, res) {
+    try {
+      const {
+        categories,
+        skills,
+        experience,
+        workFormat,
+        location,
+        employmentType,
+        benefits,
+      } = req.body;
+
+      const { _id, uid } = req.user;
+
+      await UserFilters.findOneAndUpdate(
+        { userId: _id },
+        {
+          categories,
+          skills,
+          experience,
+          workFormat,
+          location,
+          employmentType,
+          benefits,
+        },
+        { new: true },
+      );
+
+      await setClaims(uid, { onboarding: true });
 
       res.status(201).json({ status: "success", data: { user } });
     } catch (e) {
