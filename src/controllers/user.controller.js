@@ -168,7 +168,7 @@ module.exports = {
   async getUserFilters(req, res) {
     try {
       const { _id } = req.user;
-      const filters = await UserFilters.g({ userId: _id });
+      const filters = await UserFilters.findOne({ userId: _id });
 
       res.status(201).json({ status: "success", data: { filters } });
     } catch (e) {
@@ -219,7 +219,7 @@ module.exports = {
 
   async getUserResponses(req, res) {
     try {
-      const { _id } = req.user.customClaims;
+      const { _id } = req.user;
       const response = await Response.findOne({ userId: _id });
 
       res.status(201).json({ status: "success", data: { response } });
