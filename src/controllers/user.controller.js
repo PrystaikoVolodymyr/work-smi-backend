@@ -225,7 +225,7 @@ module.exports = {
         businessTrip,
         relocate,
         location,
-        skils,
+        skills,
         keyWords,
         languages,
         salary
@@ -242,7 +242,7 @@ module.exports = {
           businessTrip,
           relocate,
           location,
-          skils,
+          skills,
           keyWords,
           languages,
           salary

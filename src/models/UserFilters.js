@@ -14,7 +14,7 @@ const filterSchema = new Schema(
       currency: { type: String },
     },
     employmentType: [{ type: String }],
-    skils: [{ type: String }],
+    skills: [{ type: String }],
     categories: [{ type: String }],
     benefits: [{ type: String }],
     keyWords: [{ type: String }],

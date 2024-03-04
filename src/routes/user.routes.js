@@ -214,7 +214,7 @@ router.get("/filters", auth([ROLE_ADMIN, ROLE_CANDIDATE, ROLE_RECRUITER, ROLE_EM
  *                             type: string
  *                      location:
  *                          type: array
- *                      skils:
+ *                      skills:
  *                          type: array
  *                          items:
  *                             type: string
@@ -258,6 +258,86 @@ router.get("/filters", auth([ROLE_ADMIN, ROLE_CANDIDATE, ROLE_RECRUITER, ROLE_EM
  *                   type: string
  */
 router.patch("/filters", auth([ROLE_ADMIN, ROLE_CANDIDATE, ROLE_RECRUITER, ROLE_EMPLOYEE]), userController.updateUsersFilters);
+
+/**
+ * @swagger
+ * /users/onboarding:
+ *  post:
+ *    tags:
+ *      - users
+ *    summary: Set user onboarding
+ *    requestBody:
+ *      content:
+ *          application/json:
+ *              schema:
+ *                  type: object
+ *                  properties:
+ *                      activity:
+ *                          type: string
+ *                      position:
+ *                          type: string
+ *                      experience:
+ *                          type: string
+ *                      workFormat:
+ *                          type: array
+ *                          items:
+ *                             type: string
+ *                      employmentType:
+ *                          type: array
+ *                          items:
+ *                             type: string
+ *                      businessTrip:
+ *                          type: boolean
+ *                      relocate:
+ *                          type: array
+ *                          items:
+ *                             type: string
+ *                      location:
+ *                          type: array
+ *                      skills:
+ *                          type: array
+ *                          items:
+ *                             type: string
+ *                      keyWords:
+ *                          type: array
+ *                          items:
+ *                             type: string
+ *                      languages:
+ *                          type: array
+ *                          items:
+ *                             type: object
+ *                             properties:
+ *                               name:
+ *                                 type: string
+ *                               level:
+ *                                 type: string
+ *                      salary:
+ *                          type: object
+ *                          properties:
+ *                               amount:
+ *                                 type: number
+ *                               currency:
+ *                                 type: string
+ *
+ *    produces:
+ *      - application/json
+ *    responses:
+ *       200:
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                       filters:
+ *                         type: object
+ *                         description: Users filters.
+ *                 status:
+ *                   type: string
+ */
+router.post("/onboarding", auth([ROLE_ADMIN, ROLE_CANDIDATE, ROLE_RECRUITER, ROLE_EMPLOYEE]), userController.updateUsersFilters);
 
 /**
  * @swagger
