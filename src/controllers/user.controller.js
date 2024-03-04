@@ -44,6 +44,13 @@ module.exports = {
           surname,
         });
 
+        await UserFilters.create({
+          userId: _id,
+        });
+
+        await Response.create({
+          userId: _id,
+        });
         claims = await setClaims(userId, { _id, role });
       }
       res.status(201).json({ status: "success", data: { claims } });
@@ -101,13 +108,42 @@ module.exports = {
           ],
         });
 
-        userClaims = await setClaims(firebaseUser.uid, { role });
+        const isUserExist = await User.findOne({ uid: firebaseUser.uid });
+
+        const name = firebaseUser?.displayName
+          ? firebaseUser.displayName.split(" ")[0]
+          : "";
+
+        const surname = firebaseUser?.displayName
+          ? firebaseUser.displayName.split(" ")[1]
+          : "";
+
+        if (!isUserExist) {
+          const { _id } = await User.create({
+            email: firebaseUser.email || "",
+            displayName: firebaseUser.displayName || "",
+            uid: firebaseUser.uid,
+            photo: firebaseUser.photoURL || "",
+            role: role,
+            name,
+            surname,
+          });
+
+          await UserFilters.create({
+            userId: _id
+          })
+
+          await Response.create({
+            userId: _id
+          })
+
+          await setClaims(firebaseUser.uid, { _id, role });
+        }
       }
 
       const token = await getCustomToken(firebaseUser.uid);
 
       res.status(201).json({ status: "success", data: { token } });
-
     } catch (e) {
       console.log(e);
       res.status(400).json(e.message);
@@ -233,7 +269,7 @@ module.exports = {
       const { _id } = req.user;
       const { resume, coverLetter, templates } = req.body;
 
-     const response = await Response.findOneAndUpdate(
+      const response = await Response.findOneAndUpdate(
         { userId: _id },
         {
           resume,
@@ -264,23 +300,22 @@ module.exports = {
       const { _id } = req.user;
 
       const user = await User.findOneAndUpdate(
-          { _id: _id },
-          {
-            firstName,
-            lastName,
-            middleName,
-            phone,
-            achievements,
-            jobData,
-            educationData,
-          },
-           {new: true}
-        );
+        { _id: _id },
+        {
+          firstName,
+          lastName,
+          middleName,
+          phone,
+          achievements,
+          jobData,
+          educationData,
+        },
+        { new: true },
+      );
 
-        if (!user) {
-          throw Error("No user in DB");
-
-        }
+      if (!user) {
+        throw Error("No user in DB");
+      }
 
       res.status(201).json({ status: "success", data: { user } });
     } catch (e) {
