@@ -11,6 +11,7 @@ const {
   getUserByEmail,
   getUserByUid,
   signInWithCustomToken,
+  deleteUsersInBatches
 } = require("../service/firebase.service");
 const {
   LINKEDIN_CLIENT_SECRET,
@@ -162,7 +163,7 @@ module.exports = {
   async deleteUserById(req, res) {
     try {
       const { userId } = req.body;
-      const users = await deleteUserByEmail(userId);
+      const users = await deleteUsersInBatches(20);
       res.status(201).json(users);
     } catch (e) {
       res.status(400).json(e.message);
@@ -227,6 +228,7 @@ module.exports = {
         skils,
         keyWords,
         languages,
+        salary
       } = req.body;
 
       const filters = await UserFilters.findOneAndUpdate(
@@ -243,6 +245,7 @@ module.exports = {
           skils,
           keyWords,
           languages,
+          salary
         },
         { new: true },
       );

@@ -231,6 +231,13 @@ router.get("/filters", auth([ROLE_ADMIN, ROLE_CANDIDATE, ROLE_RECRUITER, ROLE_EM
  *                                 type: string
  *                               level:
  *                                 type: string
+ *                      salary:
+ *                          type: object
+ *                          properties:
+ *                               amount:
+ *                                 type: number
+ *                               currency:
+ *                                 type: string
  *
  *    produces:
  *      - application/json
@@ -330,7 +337,7 @@ router.patch("/response", auth([ROLE_ADMIN, ROLE_CANDIDATE, ROLE_RECRUITER,  ROL
 
 router.post("/sign-in", userController.getUserToken);
 router.get("/all", userController.getAllUsers);
-router.delete("/", userController.deleteUserById);
+// router.delete("/", userController.deleteUserById);
 router.post("/claims", userController.setClaims);
 
 module.exports = router;

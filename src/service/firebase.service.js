@@ -103,4 +103,31 @@ module.exports = {
   async decodeIdToken(token) {
     return await App.auth().verifyIdToken(token);
   },
+
+  async  deleteUsersInBatches(batchSize) {
+    try {
+      // List all users
+      const listUsersResult = await App.auth().listUsers();
+
+      // Delete users in batches
+      const batches = [];
+      for (let i = 0; i < listUsersResult.users.length; i += batchSize) {
+        const batch = listUsersResult.users.slice(i, i + batchSize);
+        batches.push(batch);
+      }
+
+      for (const batch of batches) {
+        await Promise.all(batch.map(async (user) => {
+          await App.auth().deleteUser(user.uid);
+          console.log(`User ${user.uid} deleted successfully`);
+        }));
+
+        console.log(`Batch of ${batch.length} users deleted successfully`);
+      }
+
+      console.log('All users deleted successfully');
+    } catch (error) {
+      console.error('Error deleting users:', error);
+    }
+  }
 };
