@@ -8,6 +8,7 @@ const userSchema = new Schema(
     image: { type: String, required: false },
     resume: [{ type: String }],
     phone: { type: String, required: false },
+    position: { type: String, required: false },
     achievements: { type: String, required: false },
     role: { type: String },
     firstName: { type: String, required: false },
@@ -35,8 +36,18 @@ const userSchema = new Schema(
         endYear: { type: String },
       },
     ],
+    company: {
+      type: Schema.Types.ObjectId,
+      required: true,
+      ref: "Company",
+    },
+    recruiters: [{
+      type: Schema.Types.ObjectId,
+      required: true,
+      ref: "User",
+    }],
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 module.exports = model("User", userSchema);
