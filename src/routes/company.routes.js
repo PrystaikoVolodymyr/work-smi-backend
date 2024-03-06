@@ -1,6 +1,6 @@
 const router = require("express").Router();
 const companyController = require("../controllers/company.controller");
-const { auth, ROLE_RECRUITER, ROLE_CANDIDATE, ROLE_ADMIN, ROLE_EMPLOYEE} = require('../middleware/auth.middleware');
+const { auth, ROLE_RECRUITER, ROLE_ADMIN, ROLE_EMPLOYEE} = require('../middleware/auth.middleware');
 
 
 /**
@@ -34,7 +34,7 @@ const { auth, ROLE_RECRUITER, ROLE_CANDIDATE, ROLE_ADMIN, ROLE_EMPLOYEE} = requi
  *                 status:
  *                   type: string
  */
-router.post("/create", companyController.createCompany);
+router.post("/create", auth([ROLE_ADMIN, ROLE_RECRUITER]),companyController.createCompany);
 
 /**
  * @swagger
