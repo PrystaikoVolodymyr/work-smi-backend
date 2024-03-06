@@ -2,6 +2,7 @@ const axios = require("axios");
 const User = require("../models/User");
 const UserFilters = require("../models/UserFilters");
 const Response = require("../models/Response");
+const RecruiterFilters = require("../models/RecruiterFilters");
 const {
   getUsersList,
   createUser,
@@ -30,11 +31,10 @@ module.exports = {
 
       const isUserExist = await User.findOne({ uid: userId });
 
-      const name = user?.displayName ? user.displayName.split(" ")[0] : "";
-
-      const surname = user?.displayName ? user.displayName.split(" ")[1] : "";
-
       if (!isUserExist) {
+        const name = user?.displayName ? user.displayName.split(" ")[0] : "";
+        const surname = user?.displayName ? user.displayName.split(" ")[1] : "";
+
         const { _id } = await User.create({
           email: user.email || "",
           displayName: user.displayName || "",
@@ -44,15 +44,38 @@ module.exports = {
           name,
           surname,
         });
+        const newClaims = { role, _id };
 
-        await UserFilters.create({
-          userId: _id,
-        });
+        if (role === "recruiter") {
+          if (req.body.companyId) {
+            Object.assign(newClaims, {
+              companyId: req.body.companyId,
+              company: true,
+              isAdmin: false,
+            });
+            await User.findByIdAndUpdate(_id, {
+              company: req.body.companyId,
+            });
+          } else {
+            Object.assign(newClaims, { company: false });
+          }
 
-        await Response.create({
-          userId: _id,
-        });
-        claims = await setClaims(userId, { _id, role });
+          await RecruiterFilters.create({
+            userId: _id,
+          });
+        } else {
+          await UserFilters.create({
+            userId: _id,
+          });
+
+          await Response.create({
+            userId: _id,
+          });
+
+          Object.assign(newClaims, { onboarding: false });
+        }
+
+        claims = await setClaims(userId, newClaims);
       }
       res.status(201).json({ status: "success", data: { claims } });
     } catch (e) {
@@ -191,10 +214,41 @@ module.exports = {
     }
   },
 
-  async getUserInfo(req, res) {
+  async getMyProfile(req, res) {
     try {
       const { _id } = req.user;
-      const user = await User.findById(_id);
+      const user = await User.findById(_id).populate('company');
+
+      res.status(201).json({ status: "success", data: { user } });
+    } catch (e) {
+      res.status(400).json(e.message);
+    }
+  },
+
+  async getUserInfo(req, res) {
+    try {
+      const _id = req.params.id;
+      const user = await User.findById(_id).select(
+        "email firstName lastName middleName jobData educationData achievements phone resume image"
+      );
+
+      const filters = await UserFilters.findOne({ userId: _id });
+
+      res.status(201).json({ status: "success", data: { user, filters } });
+    } catch (e) {
+      res.status(400).json(e.message);
+    }
+  },
+
+  async getRecruiterInfo(req, res) {
+    try {
+      const _id = req.params.id;
+      const user = await User.findById(_id).select(
+        "email firstName lastName middleName position phone company"
+      ).populate({
+        path: 'company',
+        select: 'companyName companyDescription companyWebsite'
+      });
 
       res.status(201).json({ status: "success", data: { user } });
     } catch (e) {
@@ -206,6 +260,17 @@ module.exports = {
     try {
       const { _id } = req.user;
       const filters = await UserFilters.findOne({ userId: _id });
+
+      res.status(201).json({ status: "success", data: { filters } });
+    } catch (e) {
+      res.status(400).json(e.message);
+    }
+  },
+
+  async getRecruiterFilters(req, res) {
+    try {
+      const { _id } = req.user;
+      const filters = await RecruiterFilters.findOne({ userId: _id });
 
       res.status(201).json({ status: "success", data: { filters } });
     } catch (e) {
@@ -256,6 +321,27 @@ module.exports = {
     }
   },
 
+  async updateRecruiterFilters(req, res) {
+    try {
+      const { _id } = req.user;
+      const { activity, keyWords, templates } = req.body;
+
+      const filters = await RecruiterFilters.findOneAndUpdate(
+        { userId: _id },
+        {
+          activity,
+          keyWords,
+          templates,
+        },
+        { new: true },
+      );
+
+      res.status(201).json({ status: "success", data: { filters } });
+    } catch (e) {
+      res.status(400).json(e.message);
+    }
+  },
+
   async getUserResponses(req, res) {
     try {
       const { _id } = req.user;
@@ -288,7 +374,7 @@ module.exports = {
     }
   },
 
-  async updateUserProfile(req, res) {
+  async updateEmployeeProfile(req, res) {
     try {
       const {
         firstName,
@@ -315,6 +401,43 @@ module.exports = {
         },
         { new: true },
       );
+
+      if (!user) {
+        throw Error("No user in DB");
+      }
+
+      res.status(201).json({ status: "success", data: { user } });
+    } catch (e) {
+      res.status(400).json(e.message);
+    }
+  },
+
+  async updateRecruiterProfile(req, res) {
+    try {
+      const {
+        firstName,
+        lastName,
+        middleName,
+        position,
+        phone
+      } = req.body;
+
+      const { _id } = req.user;
+
+      const user = await User.findOneAndUpdate(
+        { _id: _id },
+        {
+          firstName,
+          lastName,
+          middleName,
+          position,
+          phone,
+          company,
+          companyWebsite,
+          companyDescription,
+        },
+        { new: true },
+      ).populate('company');
 
       if (!user) {
         throw Error("No user in DB");

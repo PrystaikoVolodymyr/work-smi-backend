@@ -79,7 +79,7 @@ router.post("/sign-up-linkedin", userController.singUpLinkedin);
 
 /**
  * @swagger
- * /users/:
+ * /users/my-profile:
  *  get:
  *    tags:
  *      - users
@@ -102,15 +102,84 @@ router.post("/sign-up-linkedin", userController.singUpLinkedin);
  *                 status:
  *                   type: string
  */
-router.get("/", auth([ROLE_ADMIN, ROLE_CANDIDATE, ROLE_RECRUITER, ROLE_EMPLOYEE]), userController.getUserInfo);
+router.get("/my-profile", auth([ROLE_ADMIN, ROLE_CANDIDATE, ROLE_RECRUITER, ROLE_EMPLOYEE]), userController.getMyProfile);
 
 /**
  * @swagger
- * /users/:
+ * /users/employee/:id:
+ *  get:
+ *    tags:
+ *      - users
+ *    summary: Get employee profile info
+ *    produces:
+ *      - application/json
+ *    parameters:
+ *      - name: id
+ *        type: string
+ *        description: User id
+ *        required: true
+ *        in: path
+ *    responses:
+ *       200:
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                       user:
+ *                         type: object
+ *                         description: User profile info.
+ *                       filters:
+ *                         type: object
+ *                         description: User profile info.
+ *                 status:
+ *                   type: string
+ */
+router.get("/employee/:id", auth([ROLE_ADMIN, ROLE_RECRUITER]), userController.getUserInfo)
+
+/**
+ * @swagger
+ * /users/recruiter/:id:
+ *  get:
+ *    tags:
+ *      - users
+ *    summary: Get recruiter profile info
+ *    produces:
+ *      - application/json
+ *    parameters:
+ *      - name: id
+ *        type: string
+ *        description: User id
+ *        required: true
+ *        in: path
+ *    responses:
+ *       200:
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                       user:
+ *                         type: object
+ *                         description: User profile info.
+ *                 status:
+ *                   type: string
+ */
+router.get("/recruiter/:id", auth([ROLE_ADMIN, ROLE_EMPLOYEE]), userController.getRecruiterInfo);
+
+/**
+ * @swagger
+ * /users/employee:
  *  patch:
  *    tags:
  *      - users
- *    summary: Update user profile
+ *    summary: Update user employee profile
  *    requestBody:
  *      content:
  *          application/json:
@@ -150,15 +219,65 @@ router.get("/", auth([ROLE_ADMIN, ROLE_CANDIDATE, ROLE_RECRUITER, ROLE_EMPLOYEE]
  *                 status:
  *                   type: string
  */
-router.patch("/", auth([ROLE_ADMIN, ROLE_CANDIDATE, ROLE_RECRUITER, ROLE_EMPLOYEE]), userController.updateUserProfile);
+router.patch("/employee", auth([ROLE_ADMIN, ROLE_EMPLOYEE]), userController.updateEmployeeProfile);
 
 /**
  * @swagger
- * /users/filters:
+ * /users/recruiter:
+ *  patch:
+ *    tags:
+ *      - users
+ *    summary: Update user recruiter profile
+ *    requestBody:
+ *      content:
+ *          application/json:
+ *              schema:
+ *                  type: object
+ *                  properties:
+ *                      firstName:
+ *                          type: string
+ *                      lastName:
+ *                          type: string
+ *                      middleName:
+ *                          type: string
+ *                      phone:
+ *                          type: string
+ *                      position:
+ *                          type: string
+ *                      companyName:
+ *                          type: string
+ *                      companyWebsite:
+ *                          type: string
+ *                      companyDescription:
+ *                          type: string
+ *
+ *    produces:
+ *      - application/json
+ *    responses:
+ *       200:
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                       user:
+ *                         type: object
+ *                         description: User info.
+ *                 status:
+ *                   type: string
+ */
+router.patch("/recruiter", auth([ROLE_ADMIN, ROLE_RECRUITER]), userController.updateRecruiterProfile);
+
+/**
+ * @swagger
+ * /users/employee/filters:
  *  get:
  *    tags:
  *      - users
- *    summary: Get user filters info
+ *    summary: Get user employee filters info
  *    produces:
  *      - application/json
  *    responses:
@@ -177,15 +296,42 @@ router.patch("/", auth([ROLE_ADMIN, ROLE_CANDIDATE, ROLE_RECRUITER, ROLE_EMPLOYE
  *                 status:
  *                   type: string
  */
-router.get("/filters", auth([ROLE_ADMIN, ROLE_CANDIDATE, ROLE_RECRUITER, ROLE_EMPLOYEE]), userController.getUserFilters);
+router.get("/employee/filters", auth([ROLE_ADMIN, ROLE_EMPLOYEE]), userController.getUserFilters);
 
 /**
  * @swagger
- * /users/filters:
+ * /users/recruiter/filters:
+ *  get:
+ *    tags:
+ *      - users
+ *    summary: Get user recruiter filters info
+ *    produces:
+ *      - application/json
+ *    responses:
+ *       200:
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                       filters:
+ *                         type: object
+ *                         description: User filters info.
+ *                 status:
+ *                   type: string
+ */
+router.get("/recruiter/filters", auth([ROLE_ADMIN, ROLE_RECRUITER]), userController.getRecruiterFilters);
+
+/**
+ * @swagger
+ * /users/employee/filters:
  *  patch:
  *    tags:
  *      - users
- *    summary: Update user filters
+ *    summary: Update user employee filters
  *    requestBody:
  *      content:
  *          application/json:
@@ -259,7 +405,57 @@ router.get("/filters", auth([ROLE_ADMIN, ROLE_CANDIDATE, ROLE_RECRUITER, ROLE_EM
  *                 status:
  *                   type: string
  */
-router.patch("/filters", auth([ROLE_ADMIN, ROLE_CANDIDATE, ROLE_RECRUITER, ROLE_EMPLOYEE]), userController.updateUsersFilters);
+router.patch("/employee/filters", auth([ROLE_ADMIN, ROLE_EMPLOYEE]), userController.updateUsersFilters);
+
+/**
+ * @swagger
+ * /users/recruiter/filters:
+ *  patch:
+ *    tags:
+ *      - users
+ *    summary: Update user recruiter filters
+ *    requestBody:
+ *      content:
+ *          application/json:
+ *              schema:
+ *                  type: object
+ *                  properties:
+ *                      activity:
+ *                          type: string
+ *                      keyWords:
+ *                          type: array
+ *                          items:
+ *                             type: string
+ *                      templates:
+ *                          type: array
+ *                          items:
+ *                             type: object
+ *                             properties:
+ *                               name:
+ *                                 type: string
+ *                               messages:
+ *                                 type: array
+ *                                 items:
+ *                                   type: string
+ *    produces:
+ *      - application/json
+ *    responses:
+ *       200:
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                       filters:
+ *                         type: object
+ *                         description: Users filters.
+ *                 status:
+ *                   type: string
+ */
+router.patch("/recruiter/filters", auth([ROLE_ADMIN, ROLE_RECRUITER]), userController.updateRecruiterFilters);
 
 /**
  * @swagger
@@ -312,15 +508,15 @@ router.patch("/filters", auth([ROLE_ADMIN, ROLE_CANDIDATE, ROLE_RECRUITER, ROLE_
  *                 status:
  *                   type: string
  */
-router.post("/onboarding", auth([ROLE_ADMIN, ROLE_CANDIDATE, ROLE_RECRUITER, ROLE_EMPLOYEE]), userController.setUserOnboarding);
+router.post("/onboarding", auth([ROLE_ADMIN, ROLE_EMPLOYEE]), userController.setUserOnboarding);
 
 /**
  * @swagger
- * /users/response:
+ * /users/employee/response:
  *  get:
  *    tags:
  *      - users
- *    summary: Get user response info
+ *    summary: Get user employee response info
  *    produces:
  *      - application/json
  *    responses:
@@ -339,15 +535,15 @@ router.post("/onboarding", auth([ROLE_ADMIN, ROLE_CANDIDATE, ROLE_RECRUITER, ROL
  *                 status:
  *                   type: string
  */
-router.get("/response", auth([ROLE_ADMIN, ROLE_CANDIDATE, ROLE_RECRUITER, ROLE_EMPLOYEE]), userController.getUserResponses);
+router.get("/employee/response", auth([ROLE_ADMIN, ROLE_EMPLOYEE]), userController.getUserResponses);
 
 /**
  * @swagger
- * /users/response:
+ * /users/employee/response:
  *  patch:
  *    tags:
  *      - users
- *    summary: Update user response
+ *    summary: Update user employee response
  *    requestBody:
  *      content:
  *          application/json:
@@ -369,7 +565,6 @@ router.get("/response", auth([ROLE_ADMIN, ROLE_CANDIDATE, ROLE_RECRUITER, ROLE_E
  *                                 type: array
  *                                 items:
  *                                   type: string
- *
  *    produces:
  *      - application/json
  *    responses:
@@ -388,7 +583,7 @@ router.get("/response", auth([ROLE_ADMIN, ROLE_CANDIDATE, ROLE_RECRUITER, ROLE_E
  *                 status:
  *                   type: string
  */
-router.patch("/response", auth([ROLE_ADMIN, ROLE_CANDIDATE, ROLE_RECRUITER,  ROLE_EMPLOYEE]), userController.updateUsersResponse);
+router.patch("/employee/response", auth([ROLE_ADMIN,ROLE_EMPLOYEE]), userController.updateUsersResponse);
 
 router.post("/sign-in", userController.getUserToken);
 router.get("/all", userController.getAllUsers);
