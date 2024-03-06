@@ -432,9 +432,6 @@ module.exports = {
           middleName,
           position,
           phone,
-          company,
-          companyWebsite,
-          companyDescription,
         },
         { new: true },
       ).populate('company');
