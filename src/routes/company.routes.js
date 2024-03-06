@@ -16,7 +16,7 @@ const { auth, ROLE_RECRUITER, ROLE_ADMIN, ROLE_EMPLOYEE} = require('../middlewar
  *              schema:
  *                  type: object
  *                  properties:
- *                      comanyName:
+ *                      companyName:
  *                          type: string
  *                      companyWebsite:
  *                          type: string

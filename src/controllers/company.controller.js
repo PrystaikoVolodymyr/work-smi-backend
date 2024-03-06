@@ -32,10 +32,10 @@ module.exports = {
 
   async createCompany(req, res) {
     try {
-      const { comanyName, companyWebsite, companyDescription } = req.body;
+      const { companyName, companyWebsite, companyDescription } = req.body;
       const { _id, uid } = req.user;
       const company = await Company.create({
-        comanyName,
+        companyName,
         companyWebsite,
         companyDescription,
         admin: _id,
