@@ -67,7 +67,6 @@ router.post("/create", companyController.createCompany);
  *                 status:
  *                   type: string
  */
-
 router.get("/", companyController.getCompanies);
 
 module.exports = router;

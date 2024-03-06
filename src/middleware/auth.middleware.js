@@ -2,7 +2,6 @@ const { decodeIdToken } = require('../service/firebase.service');
 
 module.exports = {
     ROLE_ADMIN: 'admin',
-    ROLE_CANDIDATE: 'candidate',
     ROLE_EMPLOYEE: 'employee',
     ROLE_RECRUITER: 'recruiter',
     auth(roles) {

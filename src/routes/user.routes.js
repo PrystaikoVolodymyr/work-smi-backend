@@ -1,6 +1,6 @@
 const router = require("express").Router();
 const userController = require("../controllers/user.controller");
-const { auth, ROLE_RECRUITER, ROLE_CANDIDATE, ROLE_ADMIN, ROLE_EMPLOYEE} = require('../middleware/auth.middleware');
+const { auth, ROLE_RECRUITER, ROLE_ADMIN, ROLE_EMPLOYEE} = require('../middleware/auth.middleware');
 
 
 /**
@@ -102,11 +102,11 @@ router.post("/sign-up-linkedin", userController.singUpLinkedin);
  *                 status:
  *                   type: string
  */
-router.get("/my-profile", auth([ROLE_ADMIN, ROLE_CANDIDATE, ROLE_RECRUITER, ROLE_EMPLOYEE]), userController.getMyProfile);
+router.get("/my-profile", auth([ROLE_ADMIN, ROLE_RECRUITER, ROLE_EMPLOYEE]), userController.getMyProfile);
 
 /**
  * @swagger
- * /users/employee/:id:
+ * /users/employee/profile/:id:
  *  get:
  *    tags:
  *      - users
@@ -138,11 +138,11 @@ router.get("/my-profile", auth([ROLE_ADMIN, ROLE_CANDIDATE, ROLE_RECRUITER, ROLE
  *                 status:
  *                   type: string
  */
-router.get("/employee/:id", auth([ROLE_ADMIN, ROLE_RECRUITER]), userController.getUserInfo)
+router.get("/employee/profile/:id", auth([ROLE_ADMIN, ROLE_RECRUITER]), userController.getUserInfo);
 
 /**
  * @swagger
- * /users/recruiter/:id:
+ * /users/recruiter/profile/:id:
  *  get:
  *    tags:
  *      - users
@@ -171,7 +171,7 @@ router.get("/employee/:id", auth([ROLE_ADMIN, ROLE_RECRUITER]), userController.g
  *                 status:
  *                   type: string
  */
-router.get("/recruiter/:id", auth([ROLE_ADMIN, ROLE_EMPLOYEE]), userController.getRecruiterInfo);
+router.get("/recruiter/profile/:id", auth([ROLE_ADMIN, ROLE_EMPLOYEE]), userController.getRecruiterInfo);
 
 /**
  * @swagger
@@ -583,11 +583,11 @@ router.get("/employee/response", auth([ROLE_ADMIN, ROLE_EMPLOYEE]), userControll
  *                 status:
  *                   type: string
  */
-router.patch("/employee/response", auth([ROLE_ADMIN,ROLE_EMPLOYEE]), userController.updateUsersResponse);
+router.patch("/employee/response", auth([ROLE_ADMIN, ROLE_EMPLOYEE]), userController.updateUsersResponse);
 
-router.post("/sign-in", userController.getUserToken);
-router.get("/all", userController.getAllUsers);
-// router.delete("/", userController.deleteUserById);
-router.post("/claims", userController.setClaims);
+// router.post("/sign-in", userController.getUserToken);
+// router.get("/all", userController.getAllUsers);
+// // router.delete("/", userController.deleteUserById);
+// router.post("/claims", userController.setClaims);
 
 module.exports = router;
