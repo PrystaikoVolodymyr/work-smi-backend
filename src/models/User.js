@@ -38,12 +38,10 @@ const userSchema = new Schema(
     ],
     company: {
       type: Schema.Types.ObjectId,
-      required: true,
       ref: "Company",
     },
     recruiters: [{
       type: Schema.Types.ObjectId,
-      required: true,
       ref: "User",
     }],
   },
