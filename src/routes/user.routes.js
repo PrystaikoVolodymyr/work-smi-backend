@@ -252,6 +252,8 @@ router.patch("/employee", auth([ROLE_ADMIN, ROLE_EMPLOYEE]), userController.upda
  *                          type: string
  *                      companyDescription:
  *                          type: string
+ *                      socialNetworks:
+ *                          type: string
  *
  *    produces:
  *      - application/json

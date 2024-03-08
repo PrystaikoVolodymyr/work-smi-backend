@@ -217,7 +217,7 @@ module.exports = {
   async getMyProfile(req, res) {
     try {
       const { _id } = req.user;
-      const user = await User.findById(_id).populate('company');
+      const user = await User.findById(_id).populate("company");
 
       res.status(201).json({ status: "success", data: { user } });
     } catch (e) {
@@ -229,7 +229,7 @@ module.exports = {
     try {
       const _id = req.params.id;
       const user = await User.findById(_id).select(
-        "email firstName lastName middleName jobData educationData achievements phone resume image"
+        "email firstName lastName middleName jobData educationData achievements phone resume image",
       );
 
       const filters = await UserFilters.findOne({ userId: _id });
@@ -243,12 +243,12 @@ module.exports = {
   async getRecruiterInfo(req, res) {
     try {
       const _id = req.params.id;
-      const user = await User.findById(_id).select(
-        "email firstName lastName middleName position phone company"
-      ).populate({
-        path: 'company',
-        select: 'companyName companyDescription companyWebsite'
-      });
+      const user = await User.findById(_id)
+        .select("email firstName lastName middleName position phone company")
+        .populate({
+          path: "company",
+          select: "companyName companyDescription companyWebsite",
+        });
 
       res.status(201).json({ status: "success", data: { user } });
     } catch (e) {
@@ -384,7 +384,7 @@ module.exports = {
         achievements,
         jobData,
         educationData,
-        socialNetworks
+        socialNetworks,
       } = req.body;
 
       const { _id } = req.user;
@@ -399,7 +399,7 @@ module.exports = {
           achievements,
           jobData,
           educationData,
-          socialNetworks
+          socialNetworks,
         },
         { new: true },
       );
@@ -421,7 +421,8 @@ module.exports = {
         lastName,
         middleName,
         position,
-        phone
+        phone,
+        socialNetworks
       } = req.body;
 
       const { _id } = req.user;
@@ -434,9 +435,10 @@ module.exports = {
           middleName,
           position,
           phone,
+          socialNetworks
         },
         { new: true },
-      ).populate('company');
+      ).populate("company");
 
       if (!user) {
         throw Error("No user in DB");
