@@ -384,6 +384,7 @@ module.exports = {
         achievements,
         jobData,
         educationData,
+        socialNetworks
       } = req.body;
 
       const { _id } = req.user;
@@ -398,6 +399,7 @@ module.exports = {
           achievements,
           jobData,
           educationData,
+          socialNetworks
         },
         { new: true },
       );

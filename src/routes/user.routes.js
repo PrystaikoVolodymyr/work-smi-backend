@@ -200,6 +200,8 @@ router.get("/recruiter/profile/:id", auth([ROLE_ADMIN, ROLE_EMPLOYEE]), userCont
  *                          type: object
  *                      educationData:
  *                          type: object
+ *                      socialNetworks:
+ *                          type: object
  *
  *    produces:
  *      - application/json

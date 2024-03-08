@@ -14,6 +14,12 @@ const userSchema = new Schema(
     firstName: { type: String, required: false },
     lastName: { type: String, required: false },
     middleName: { type: String, required: false },
+    socialNetworks: [
+      {
+        title: { type: String },
+        link: { type: String }
+      },
+    ],
     jobData: [
       {
         position: { type: String },
@@ -40,10 +46,12 @@ const userSchema = new Schema(
       type: Schema.Types.ObjectId,
       ref: "Company",
     },
-    recruiters: [{
-      type: Schema.Types.ObjectId,
-      ref: "User",
-    }],
+    recruiters: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
   },
   { timestamps: true },
 );
