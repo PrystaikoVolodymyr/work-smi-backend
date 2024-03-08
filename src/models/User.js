@@ -14,12 +14,11 @@ const userSchema = new Schema(
     firstName: { type: String, required: false },
     lastName: { type: String, required: false },
     middleName: { type: String, required: false },
-    socialNetworks: [
-      {
-        title: { type: String },
-        link: { type: String }
-      },
-    ],
+    socialNetworks: {
+      LinkedIn: { type: String },
+      Telegram: { type: String },
+      Facebook: { type: String },
+    },
     jobData: [
       {
         position: { type: String },
