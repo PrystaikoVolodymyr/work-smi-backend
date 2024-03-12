@@ -2,7 +2,7 @@ const admin = require("firebase-admin");
 const firebase = require("firebase/app");
 require("firebase/analytics");
 require("firebase/auth");
-const config = require("../config/config");
+// const config = require("../config/config");
 const serviceAccount = require("../../firebase-admin-sdk.json");
 const firebaseConfig = require("../../firebase-config.json");
 
