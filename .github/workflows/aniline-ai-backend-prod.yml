@@ -1,0 +1,65 @@
+name: Aniline AI Backend Test - Deploy
+
+on:
+  push:
+    tags:
+      - v*
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@master
+
+      - name: gitleaks-action
+        uses: gitleaks/gitleaks-action@v1.6.0
+
+      - name: Set up Node.js version
+        uses: actions/setup-node@v1
+        with:
+          node-version: '18.x'
+
+      - name: npm install
+        run: npm install
+      - name: Create admin-sdk-key.json file
+        run: echo "${ADMIN_SDK_KEY}" > admin-sdk-key.json
+        env:
+         ADMIN_SDK_KEY: ${{ secrets.ADMIN_SDK_KEY_PROD }}
+
+      - name: Create firebase-config.json file
+        run: echo "${FIREBASE_CONFIG}" > firebase-config.json
+        env:
+          FIREBASE_CONFIG: ${{ secrets.FIREBASE_CONFIG_PROD }}
+
+      - name: Create .env file
+        run: echo "${PROD_ENV}" > .env
+        env:
+          PROD_ENV: ${{ secrets.PROD_ENV }}
+
+
+      - name: Google Auth
+        id: auth
+        uses: google-github-actions/auth@v0
+        with:
+          credentials_json: ${{ secrets.GCLOUD_AUTH_PROD }}
+
+      - name: Set up Google Cloud SDK
+        uses: google-github-actions/setup-gcloud@v1
+
+      - name: Configure Docker to use gcloud command-line tool
+        run: |
+          gcloud auth configure-docker
+
+      - name: Build and push the container image
+        run: |
+          docker build -t "gcr.io/aniline-prod/aniline-annie-prod:${{ github.sha }}" ./
+          docker push "gcr.io/aniline-prod/aniline-annie-prod:${{ github.sha }}"
+
+      - name: Deploy to Cloud Run
+        id: deploy
+        uses: google-github-actions/deploy-cloudrun@v0
+        with:
+          service: aniline-annie-prod
+          region: us-west2
+          image: gcr.io/aniline-prod/aniline-annie-prod:${{ github.sha }}
